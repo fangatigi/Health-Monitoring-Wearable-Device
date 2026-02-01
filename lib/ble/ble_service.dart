@@ -11,17 +11,26 @@ class BleService {
   BluetoothDevice? _device;
   BluetoothCharacteristic? _notifyChar;
 
+  // ---- CONNECTION STATE ----
+  final StreamController<bool> _connectionController =
+      StreamController<bool>.broadcast();
+  Stream<bool> get connectionStream => _connectionController.stream;
+
+  // ---- DATA STREAM ----
   final StreamController<HealthData> _dataController =
       StreamController<HealthData>.broadcast();
-
   Stream<HealthData> get dataStream => _dataController.stream;
 
+  bool _connected = false;
+
+  // ---- PUBLIC INIT ----
   Future<void> init() async {
     await _requestPermissions();
     await _scanAndConnect();
     await _discoverAndSubscribe();
   }
 
+  // ---- PERMISSIONS ----
   Future<void> _requestPermissions() async {
     await [
       Permission.bluetoothScan,
@@ -30,81 +39,101 @@ class BleService {
     ].request();
   }
 
- Future<void> _scanAndConnect() async {
-  print("BLE: Starting scan...");
+  // ---- SCAN + CONNECT ----
+  Future<void> _scanAndConnect() async {
+    print("BLE: Starting scan...");
 
-  await FlutterBluePlus.startScan(
-    timeout: const Duration(seconds: 8),
-  );
+    await FlutterBluePlus.startScan(
+      timeout: const Duration(seconds: 8),
+    );
 
-  await for (final results in FlutterBluePlus.scanResults) {
-    for (final r in results) {
-      print("BLE: Found ${r.device.platformName}");
+    await for (final results in FlutterBluePlus.scanResults) {
+      for (final r in results) {
+        final name = r.device.platformName;
 
-      if (r.device.platformName == deviceName) {
-        print("BLE: ESP32 FOUND");
+        print("BLE: Found $name");
 
-        await FlutterBluePlus.stopScan();
-        _device = r.device;
+        if (name == deviceName) {
+          print("BLE: Target ESP32 found");
 
-        print("BLE: Connecting to ESP32...");
-        await _device!.connect(autoConnect: false);
-        print("BLE: CONNECTED");
+          await FlutterBluePlus.stopScan();
 
-        return;
-      }
-    }
-  }
-}
+          _device = r.device;
 
- Future<void> _discoverAndSubscribe() async {
-  print("BLE: Discovering services...");
+          print("BLE: Connecting...");
+          await _device!.connect(autoConnect: false);
 
-  final services = await _device!.discoverServices();
+          _connected = true;
+          _connectionController.add(true);
 
-  for (final s in services) {
-    print("BLE: Service ${s.uuid}");
-
-    if (s.uuid == serviceUUID) {
-      print("BLE: Target service found");
-
-      for (final c in s.characteristics) {
-        print("BLE: Characteristic ${c.uuid}");
-
-        if (c.uuid == charUUID) {
-          print("BLE: Notify characteristic found");
-
-          _notifyChar = c;
-          await _notifyChar!.setNotifyValue(true);
-
-          print("BLE: Notifications enabled");
-          _notifyChar!.lastValueStream.listen(_onData);
-
+          print("BLE: Connected");
           return;
         }
       }
     }
+
+    throw Exception("BLE: ESP32 device not found");
   }
 
-  throw Exception("BLE: Notify characteristic NOT FOUND");
-}
+  // ---- DISCOVER + SUBSCRIBE ----
+  Future<void> _discoverAndSubscribe() async {
+    if (_device == null) {
+      throw Exception("BLE: Device is null");
+    }
 
+    print("BLE: Discovering services...");
+    final services = await _device!.discoverServices();
 
-void _onData(List<int> value) {
-  final raw = String.fromCharCodes(value);
-  print("BLE RAW DATA: $raw");
+    for (final service in services) {
+      print("BLE: Service ${service.uuid}");
 
-  try {
-    final map = jsonDecode(raw) as Map<String, dynamic>;
-    final data = HealthData.fromJson(map);
-    _dataController.add(data);
-  } catch (e) {
-    print("BLE PARSE ERROR");
+      if (service.uuid == serviceUUID) {
+        print("BLE: Target service found");
+
+        for (final char in service.characteristics) {
+          print("BLE: Characteristic ${char.uuid}");
+
+          if (char.uuid == charUUID) {
+            print("BLE: Notify characteristic found");
+
+            _notifyChar = char;
+
+            await _notifyChar!.setNotifyValue(true);
+            _notifyChar!.lastValueStream.listen(_onData);
+
+            print("BLE: Notifications enabled");
+            return;
+          }
+        }
+      }
+    }
+
+    throw Exception("BLE: Notify characteristic NOT FOUND");
   }
-}
 
+  // ---- DATA HANDLER ----
+  void _onData(List<int> value) {
+    final raw = String.fromCharCodes(value);
+    print("BLE RAW DATA: $raw");
+
+    try {
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      final data = HealthData.fromJson(map);
+      _dataController.add(data);
+    } catch (e) {
+      print("BLE PARSE ERROR: $e");
+    }
+  }
+
+  // ---- CLEANUP ----
   void dispose() {
+    if (_connected) {
+      _connectionController.add(false);
+    }
+
+    _connectionController.close();
     _dataController.close();
+
     _device?.disconnect();
   }
 }
