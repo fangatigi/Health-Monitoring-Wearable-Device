@@ -115,5 +115,5 @@ pubspec.yaml
 ## 👤 Author
 
 **Harshit P**  
-Engineering Student — VLSI,Embedded Systems, Biomedical Tech, Mobile Dev  
+Engineering Student — VLSI, Embedded Systems, Biomedical Tech, Mobile Dev  
 📍 India
